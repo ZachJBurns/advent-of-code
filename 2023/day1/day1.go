@@ -3,41 +3,24 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
-	"strings"
-	"unicode"
+	"regexp"
 )
 
 func part1() {
 	file, _ := os.Open("day1.input")
 	scanner := bufio.NewScanner(file)
 	total := 0
-
+	var matcher = regexp.MustCompile("([1-9])")
 	for scanner.Scan() {
 		text := scanner.Text()
+		matches := matcher.FindAll([]byte(text), math.MaxInt64)
 
 		if text == "" {
 			continue
 		}
-
-		left := 0
-		right := len(text) - 1
-		found1 := false
-		found2 := false
-
-		for !found1 || !found2 {
-			if unicode.IsDigit(rune(text[left])) && !found1 {
-				found1 = true
-				total += int(text[left]-'0') * 10
-			}
-
-			if unicode.IsDigit(rune(text[right])) && !found2 {
-				found2 = true
-				total += int(text[right] - '0')
-			}
-			left++
-			right--
-		}
+		total += int(rune(matches[0][0])-'0')*10 + int(rune(matches[len(matches)-1][0])-'0')
 	}
 
 	fmt.Println(total)
@@ -49,69 +32,75 @@ func part2() {
 	total := 0
 	spelled_digits := map[string]int{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
 
+	var matcher = regexp.MustCompile("([1-9]|sevenine|eighthree|eightwo|threeight|oneight|twone|one|two|three|four|five|six|seven|eight|nine)")
+
 	for scanner.Scan() {
 		text := scanner.Text()
 		if text == "" {
 			continue
 		}
 
-		left := 0
-		right := len(text) - 1
+		matches := matcher.FindAllString(text, math.MaxInt64)
 
-		left_window := ""
-		right_window := ""
+		last_element := len(matches) - 1
 
-		found1 := false
-		found2 := false
-
-		for !found1 || !found2 {
-			if !found1 {
-				if unicode.IsDigit(rune(text[left])) {
-					found1 = true
-					total += int(text[left]-'0') * 10
-					left_window = ""
-				} else {
-					if len(left_window) > 5 {
-						left_window = left_window[1:]
-					}
-
-					for k, v := range spelled_digits {
-						if strings.Contains(left_window, k) {
-							total += v * 10
-							found1 = true
-							break
-						}
-					}
-				}
+		if len(matches[0]) > 1 {
+			switch matches[0] {
+			case "sevenine":
+				total += 70
+				break
+			case "eighthree":
+				total += 80
+				break
+			case "twone":
+				total += 20
+				break
+			case "eightwo":
+				total += 80
+				break
+			case "threeight":
+				total += 30
+				break
+			case "oneight":
+				total += 10
+				break
+			default:
+				total += spelled_digits[matches[0]] * 10
+				break
 			}
-
-			if !found2 {
-				if unicode.IsDigit(rune(text[right])) {
-					found2 = true
-					total += int(text[right] - '0')
-					right_window = ""
-				} else {
-					right_window = string(text[right]) + right_window
-					if len(right_window) > 5 {
-						right_window = right_window[:len(right_window)-1]
-					}
-
-					for k, v := range spelled_digits {
-						if strings.Contains(right_window, k) {
-							total += v
-							found2 = true
-							break
-						}
-					}
-				}
-			}
-
-			left++
-			right--
+		} else {
+			total += int([]rune(matches[0])[0]-'0') * 10
 		}
 
-	}
+		if len(matches[last_element]) > 1 {
+			switch matches[last_element] {
+			case "sevenine":
+				total += 9
+				break
+			case "eighthree":
+				total += 3
+				break
+			case "twone":
+				total += 1
+				break
+			case "eightwo":
+				total += 2
+				break
+			case "threeight":
+				total += 8
+				break
+			case "oneight":
+				total += 8
+				break
+			default:
+				total += spelled_digits[matches[last_element]]
+				break
+			}
+		} else {
+			total += int([]rune(matches[last_element])[0] - '0')
 
+		}
+	}
 	fmt.Println(total)
 }
 
