@@ -72,39 +72,6 @@ func part1() {
 	fmt.Println(total)
 }
 
-func bfs(adj_map map[Point][]Point, start, target Point) int {
-	// write bfs algorithm
-	parents := make(map[Point]Point)
-	queue := []Point{start}
-	visited := make(map[Point]bool)
-	total := 0
-
-	for len(queue) > 0 {
-		node := queue[0]
-		queue = queue[1:]
-		visited[node] = true
-
-		if node == target {
-			// Backtrack to find the total number of steps
-			point := target
-			for point != start {
-				point = parents[point]
-				total++
-			}
-			break
-		}
-
-		for _, neighbor := range adj_map[node] {
-			if !visited[neighbor] {
-				queue = append(queue, neighbor)
-				parents[neighbor] = node
-			}
-		}
-	}
-
-	return total
-}
-
 func part2() {
 	file, _ := os.ReadFile("day11.input")
 	text := strings.Split(string(file), "\n")
