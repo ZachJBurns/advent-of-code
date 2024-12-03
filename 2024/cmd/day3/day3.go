@@ -46,10 +46,11 @@ func IsUndo(substring string) bool {
 }
 
 func main() {
-	file := helper.ReadFile("test.txt")
+	file := helper.ReadFile("input.txt")
 
 	start := 0
-	total := 0
+	total1 := 0
+	total2 := 0
 	disabled := false
 	for start < len(file) {
 		found := false
@@ -65,11 +66,12 @@ func main() {
 
 			ret, err := CheckAndCalculate(sub)
 			if err == nil {
-				if !disabled {
-					total += ret
-				}
+                total1 += ret
 				start = end + 1
 				found = true
+				if !disabled {
+					total2 += ret
+				}
 				break
 
 			}
@@ -79,6 +81,7 @@ func main() {
 			start++
 		}
 	}
-	fmt.Println("Part 1 Answer:", total)
+	fmt.Println("Part 1 Answer:", total1)
+	fmt.Println("Part 2 Answer:", total2)
 
 }
