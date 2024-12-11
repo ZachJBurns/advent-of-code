@@ -40,8 +40,8 @@ func main() {
 			visited[i] = make([]bool, len(trailMap[0]))
 		}
 		visitedMap := visited
-		total2 += track(val, 0, trailMap, visitedMap, false)
-		total1 += track(val, 0, trailMap, visitedMap, true)
+		total2 += backtrack(val, 0, trailMap, visitedMap, false)
+		total1 += backtrack(val, 0, trailMap, visitedMap, true)
 
 	}
 
@@ -49,9 +49,10 @@ func main() {
 	fmt.Println("Part 2 Answer:", total2)
 }
 
-func track(pos image.Point, count int, trailMap [][]int, visited [][]bool, enableVisiting bool) int {
+func backtrack(pos image.Point, count int, trailMap [][]int, visited [][]bool, enableVisiting bool) int {
 	i := len(trailMap)
 	j := len(trailMap[0])
+
 	if pos.X >= i || pos.Y >= j || pos.X < 0 || pos.Y < 0 {
 		return 0
 	}
@@ -68,6 +69,6 @@ func track(pos image.Point, count int, trailMap [][]int, visited [][]bool, enabl
 		return 1
 	}
 
-	return track(pos.Add(image.Point{-1, 0}), count+1, trailMap, visited, enableVisiting) + track(pos.Add(image.Point{0, 1}), count+1, trailMap, visited, enableVisiting) + track(pos.Add(image.Point{1, 0}), count+1, trailMap, visited, enableVisiting) + track(pos.Add(image.Point{0, -1}), count+1, trailMap, visited, enableVisiting)
+	return backtrack(pos.Add(image.Point{-1, 0}), count+1, trailMap, visited, enableVisiting) + backtrack(pos.Add(image.Point{0, 1}), count+1, trailMap, visited, enableVisiting) + backtrack(pos.Add(image.Point{1, 0}), count+1, trailMap, visited, enableVisiting) + backtrack(pos.Add(image.Point{0, -1}), count+1, trailMap, visited, enableVisiting)
 
 }
