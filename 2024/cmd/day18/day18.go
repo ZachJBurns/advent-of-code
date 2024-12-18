@@ -12,11 +12,10 @@ import (
 func main() {
 	file, _ := os.Open("input.txt")
 	bytes := []image.Point{}
-    badPoints := map[image.Point]bool{}
+	badPoints := map[image.Point]bool{}
 
-    endPoint := image.Point{70, 70}
-    numBytes:= 1024
-
+	endPoint := image.Point{70, 70}
+	numBytes := 1024
 
 	scanner := bufio.NewScanner(file)
 
@@ -29,29 +28,38 @@ func main() {
 		bytes = append(bytes, image.Point{x, y})
 	}
 
-    for i:= 0; i < numBytes; i++ {
-        badPoints[bytes[i]] = true
-    }
+	for i := 0; i < numBytes; i++ {
+		badPoints[bytes[i]] = true
+	}
 
-    fmt.Println("Part 1 Answer:", BFS(image.Point{0,0}, endPoint, badPoints))
-    clear(badPoints)
+	fmt.Println("Part 1 Answer:", BFS(image.Point{0, 0}, endPoint, badPoints))
 
-    for i:= 0; i < len(bytes); i++ {
-        badPoints[bytes[i]] = true
-        if BFS(image.Point{0,0}, endPoint, badPoints) == -1 {
-            fmt.Println("Part 2 Answer:", bytes[i])
-            break
-            
-        }
+	clear(badPoints)
+	low, high := 0, len(bytes)-1
+	result := image.Point{}
+	for low <= high {
+		mid := (low + high) / 2
 
-    }
+		for i := 0; i <= mid; i++ {
+			badPoints[bytes[i]] = true
+		}
+
+		if BFS(image.Point{0, 0}, endPoint, badPoints) == -1 {
+			result = bytes[mid]
+			high = mid - 1
+		} else {
+			low = mid + 1
+		}
+		clear(badPoints)
+	}
+    fmt.Println("Part 2 Answer:", result)
 }
 
-func BFS(start, end image.Point, badPoints map[image.Point]bool) int{
-    type State struct {
-        point image.Point
-        distance int
-    }
+func BFS(start, end image.Point, badPoints map[image.Point]bool) int {
+	type State struct {
+		point    image.Point
+		distance int
+	}
 	directions := []image.Point{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
 	queue := []State{{start, 0}}
 	visited := map[image.Point]bool{}
@@ -59,13 +67,13 @@ func BFS(start, end image.Point, badPoints map[image.Point]bool) int{
 	for len(queue) > 0 {
 		pop := queue[0]
 		queue = queue[1:]
-        
-        if pop.point == end {
-            return pop.distance
-        }
-        if visited[pop.point]{
-            continue
-        }
+
+		if pop.point == end {
+			return pop.distance
+		}
+		if visited[pop.point] {
+			continue
+		}
 		visited[pop.point] = true
 
 		for _, dir := range directions {
@@ -77,8 +85,8 @@ func BFS(start, end image.Point, badPoints map[image.Point]bool) int{
 			if visited[next] {
 				continue
 			}
-            queue = append(queue, State{next, pop.distance+1})
+			queue = append(queue, State{next, pop.distance + 1})
 		}
 	}
-    return -1
+	return -1
 }
