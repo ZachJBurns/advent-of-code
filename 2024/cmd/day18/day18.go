@@ -52,7 +52,7 @@ func main() {
 		}
 		clear(badPoints)
 	}
-    fmt.Println("Part 2 Answer:", result)
+	fmt.Println("Part 2 Answer:", result)
 }
 
 func BFS(start, end image.Point, badPoints map[image.Point]bool) int {
